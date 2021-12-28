@@ -44,6 +44,8 @@ trait BuildTarget {
 
   object resources extends Endpoint[ResourcesParams, ResourcesResult]("buildTarget/resources")
 
+  object excludes extends Endpoint[ExcludesParams, ExcludesResult]("buildTarget/excludes")
+
   // Scala specific endpoints
   object scalacOptions
       extends Endpoint[ScalacOptionsParams, ScalacOptionsResult]("buildTarget/scalacOptions")

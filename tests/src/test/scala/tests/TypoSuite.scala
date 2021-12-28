@@ -50,6 +50,7 @@ class TypoSuite extends AnyFunSuite {
   val textDocumentIdentifier = new TextDocumentIdentifier("tti")
   val textDocumentIdentifiers: util.List[TextDocumentIdentifier] =
     Collections.singletonList(textDocumentIdentifier)
+  val excludesUri = "file:///target/"
 
   // Java build client that ignores all notifications.
   val silentJavaClient: BuildClient = new BuildClient {
@@ -148,6 +149,17 @@ class TypoSuite extends AnyFunSuite {
       CompletableFuture.completedFuture {
         val item = new ResourcesItem(buildTargetUri, Collections.singletonList(textDocumentUri))
         new ResourcesResult(Collections.singletonList(item))
+      }
+    }
+    override def buildTargetExcludes(
+        params: ExcludesParams
+    ): CompletableFuture[ExcludesResult] = {
+      CompletableFuture.completedFuture {
+        val item = new ExcludesItem(
+          buildTargetUri,
+          Collections.singletonList(new ExcludeItem(excludesUri, ExcludeItemKind.DIRECTORY))
+        )
+        new ExcludesResult(Collections.singletonList(item))
       }
     }
     override def buildTargetCompile(params: CompileParams): CompletableFuture[CompileResult] = {

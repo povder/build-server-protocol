@@ -461,6 +461,32 @@ trait Bsp4jGenerators {
     items <- genSourcesItem.list
   } yield new SourcesResult(items)
 
+  lazy val genExcludeItem: Gen[ExcludeItem] = for {
+    uri <- genFileUriString
+    kind <- genExcludeItemKind
+  } yield new ExcludeItem(uri, kind)
+
+  lazy val genExcludeItemKind: Gen[ExcludeItemKind] =
+    Gen.oneOf(ExcludeItemKind.values)
+
+  lazy val genExcludesItem: Gen[ExcludesItem] = for {
+    target <- genBuildTargetIdentifier
+    excludes <- genExcludeItem.list
+    roots <- genFileUriString.list.nullable
+  } yield {
+    val item = new ExcludesItem(target, excludes)
+    item.setRoots(roots)
+    item
+  }
+
+  lazy val genExcludesParams: Gen[ExcludesParams] = for {
+    targets <- genBuildTargetIdentifier.list
+  } yield new ExcludesParams(targets)
+
+  lazy val genExcludesResult: Gen[ExcludesResult] = for {
+    items <- genExcludesItem.list
+  } yield new ExcludesResult(items)
+
   lazy val genStatusCode: Gen[StatusCode] = Gen.oneOf(StatusCode.values)
 
   lazy val genTaskDataKind: Gen[String] = Gen.oneOf(

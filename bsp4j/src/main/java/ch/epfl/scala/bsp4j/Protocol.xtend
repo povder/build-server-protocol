@@ -408,6 +408,44 @@ class ResourcesItem {
 }
 
 @JsonRpcData
+class ExcludesParams {
+  @NonNull List<BuildTargetIdentifier> targets
+  new(@NonNull List<BuildTargetIdentifier> targets) {
+    this.targets = targets
+  }
+}
+
+@JsonRpcData
+class ExcludesResult {
+  @NonNull List<ExcludesItem> items
+  new(@NonNull List<ExcludesItem> items) {
+    this.items = items
+  }
+}
+
+@JsonRpcData
+class ExcludesItem {
+  @NonNull BuildTargetIdentifier target
+  @NonNull List<ExcludeItem> excludes
+  List<String> roots
+  new(@NonNull BuildTargetIdentifier target, @NonNull List<ExcludeItem> excludes) {
+    this.target = target
+    this.excludes = excludes
+  }
+}
+
+@JsonRpcData
+class ExcludeItem {
+  @NonNull String uri
+  @NonNull ExcludeItemKind kind
+
+  new(@NonNull String uri, @NonNull ExcludeItemKind kind) {
+    this.uri = uri
+    this.kind = kind
+  }
+}
+
+@JsonRpcData
 class CompileParams {
   @NonNull List<BuildTargetIdentifier> targets
   String originId

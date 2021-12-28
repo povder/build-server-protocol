@@ -650,6 +650,63 @@ object ResourcesItem {
     JsonCodecMaker.makeWithRequiredCollectionFields
 }
 
+final case class ExcludesParams(
+    targets: List[BuildTargetIdentifier]
+)
+
+object ExcludesParams {
+  implicit val codec: JsonValueCodec[ExcludesParams] =
+    JsonCodecMaker.makeWithRequiredCollectionFields
+}
+
+final case class ExcludesResult(
+    items: List[ExcludesItem]
+)
+
+object ExcludesResult {
+  implicit val codec: JsonValueCodec[ExcludesResult] =
+    JsonCodecMaker.makeWithRequiredCollectionFields
+}
+
+final case class ExcludesItem(
+    target: BuildTargetIdentifier,
+    excludes: List[ExcludeItem]
+)
+
+object ExcludesItem {
+  implicit val codec: JsonValueCodec[ExcludesItem] =
+    JsonCodecMaker.makeWithRequiredCollectionFields
+}
+
+final case class ExcludeItem(
+    uri: Uri,
+    kind: ExcludeItemKind
+)
+
+object ExcludeItem {
+  implicit val codec: JsonValueCodec[ExcludeItem] =
+    JsonCodecMaker.makeWithRequiredCollectionFields
+}
+
+sealed abstract class ExcludeItemKind(val id: Int)
+object ExcludeItemKind {
+  object File extends ExcludeItemKind(1)
+  object Directory extends ExcludeItemKind(2)
+
+  implicit val codec: JsonValueCodec[ExcludeItemKind] = new JsonValueCodec[ExcludeItemKind] {
+    def nullValue: ExcludeItemKind = null
+    def encodeValue(item: ExcludeItemKind, out: JsonWriter): Unit =
+      out.writeVal(item.id)
+    def decodeValue(in: JsonReader, default: ExcludeItemKind): ExcludeItemKind = {
+      in.readInt() match {
+        case 1 => File
+        case 2 => Directory
+        case n => in.decodeError(s"Unknown source item kind id for $n")
+      }
+    }
+  }
+}
+
 // Request: 'buildTarget/compile', C -> S
 final case class CompileParams(
     targets: List[BuildTargetIdentifier],

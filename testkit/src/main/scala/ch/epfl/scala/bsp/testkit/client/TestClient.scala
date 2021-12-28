@@ -591,6 +591,35 @@ class TestClient(
     )
   }
 
+  def testExcludesResults(
+      expectedWorkspaceBuildTargetsResult: WorkspaceBuildTargetsResult,
+      expectedWorkspaceExcludesResult: ExcludesResult,
+      session: MockSession
+  ): Future[Unit] = {
+    compareResults(
+      targets => session.connection.server.buildTargetExcludes(new ExcludesParams(targets)),
+      (results: ExcludesResult) =>
+        expectedWorkspaceExcludesResult.getItems.forall { excludeItem =>
+          {
+            results.getItems.exists(resultItem =>
+              resultItem.getTarget == excludeItem.getTarget && excludeItem.getExcludes.forall(
+                excludeItem =>
+                  resultItem.getExcludes.exists(resultExclude =>
+                    resultExclude.getUri
+                      .contains(
+                        excludeItem.getUri
+                      ) && resultExclude.getKind == excludeItem.getKind
+                  )
+              )
+            )
+          }
+        },
+      expectedWorkspaceExcludesResult,
+      expectedWorkspaceBuildTargetsResult,
+      session
+    )
+  }
+
   def cleanCacheSuccessfully(session: MockSession): Future[Unit] = {
     cleanCache(session).map(cleanCacheResult => {
       assert(cleanCacheResult.getCleaned, "Did not clean cache successfully")

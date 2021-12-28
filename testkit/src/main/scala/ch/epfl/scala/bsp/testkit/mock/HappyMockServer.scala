@@ -380,6 +380,30 @@ class HappyMockServer(base: File) extends AbstractMockServer {
       Right(result)
     }
 
+  override def buildTargetExcludes(params: ExcludesParams): CompletableFuture[ExcludesResult] =
+    handleRequest {
+      val excludeDir1 = new URI(targetId1.getUri).resolve("log/")
+      val item1 = new ExcludeItem(asDirUri(excludeDir1), ExcludeItemKind.DIRECTORY)
+      val items1 = new ExcludesItem(targetId1, List(item1).asJava)
+
+      val excludeDir2 = new URI(targetId2.getUri).resolve("target/")
+      val item2 = new ExcludeItem(asDirUri(excludeDir2), ExcludeItemKind.DIRECTORY)
+      val items2 = new ExcludesItem(targetId2, List(item2).asJava)
+
+      val excludeDir3 = new URI(targetId3.getUri).resolve("work/")
+      val excludeFile1 = new URI(targetId3.getUri).resolve("tmp/file1")
+      val excludeFile2 = new URI(targetId3.getUri).resolve("tmp/below/file2")
+      val excludeFile3 = new URI(targetId3.getUri).resolve("tmp/file3")
+      val item3Dir = new ExcludeItem(asDirUri(excludeDir3), ExcludeItemKind.DIRECTORY)
+      val item31 = new ExcludeItem(excludeFile1.toString, ExcludeItemKind.FILE)
+      val item32 = new ExcludeItem(excludeFile2.toString, ExcludeItemKind.FILE)
+      val item33 = new ExcludeItem(excludeFile3.toString, ExcludeItemKind.FILE)
+      val items3 = new ExcludesItem(targetId3, List(item3Dir, item31, item32, item33).asJava)
+
+      val result = new ExcludesResult(List(items1, items2, items3).asJava)
+      Right(result)
+    }
+
   override def buildTargetCompile(params: CompileParams): CompletableFuture[CompileResult] =
     handleRequest {
       val uncompilableTargets = params.getTargets.asScala.filter(targetIdentifier => {

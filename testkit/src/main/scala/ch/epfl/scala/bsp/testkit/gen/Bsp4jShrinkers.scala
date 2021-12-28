@@ -495,6 +495,27 @@ trait Bsp4jShrinkers extends UtilShrinkers {
     shrink(a.getItems).map(new SourcesResult(_))
   }
 
+  implicit def shrinkExcludeItem: Shrink[ExcludeItem] = Shrink { a =>
+    for {
+      uri <- shrink(a.getUri)
+    } yield new ExcludeItem(uri, a.getKind)
+  }
+
+  implicit def shrinkExcludesItem: Shrink[ExcludesItem] = Shrink { a =>
+    for {
+      target <- shrink(a.getTarget)
+      excludes <- shrink(a.getExcludes)
+    } yield new ExcludesItem(target, excludes)
+  }
+
+  implicit def shrinkExcludesParams: Shrink[ExcludesParams] = Shrink { a =>
+    shrink(a.getTargets).map(new ExcludesParams(_))
+  }
+
+  implicit def shrinkExcludesResult: Shrink[ExcludesResult] = Shrink { a =>
+    shrink(a.getItems).map(new ExcludesResult(_))
+  }
+
   implicit def shrinkTaskFinishParams: Shrink[TaskFinishParams] = Shrink { a =>
     for {
       taskId <- shrink(a.getTaskId)

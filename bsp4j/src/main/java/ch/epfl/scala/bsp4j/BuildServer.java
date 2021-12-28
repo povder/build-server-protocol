@@ -37,6 +37,9 @@ public interface BuildServer {
     @JsonRequest("buildTarget/resources")
     CompletableFuture<ResourcesResult> buildTargetResources(ResourcesParams params);
 
+    @JsonRequest("buildTarget/excludes")
+    CompletableFuture<ExcludesResult> buildTargetExcludes(ExcludesParams params);
+
     @JsonRequest("buildTarget/compile")
     CompletableFuture<CompileResult> buildTargetCompile(CompileParams params);
 
